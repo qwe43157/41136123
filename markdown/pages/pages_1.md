@@ -1,6 +1,6 @@
 Title: About
 
-## CP_2025 計算機程式
+## CMSimfly 網際內容管理
 
 課程倉儲: <a href="https://github.com/chiamingyen/cmsimfly">https://github.com/chiamingyen/cmsimfly</a>
 
