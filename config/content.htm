@@ -204,6 +204,88 @@
 <p><span><strong>總結:</strong></span></p>
 <p>Brython 就是：用 Python 在瀏覽器寫前端程式</p>
 <h2>W10</h2>
+<p><br/><span>如何在瀏覽器中模擬機器人作動？ (</span><a href="https://mde.tw/cp2025/content/Brython.html?src=https://gist.githubusercontent.com/mdecycu/58fed8bd2f5be98a6456a8dcae512011/raw/4019adba4ee4be19c35982d835bad8e7d83a7b2f/brython_robot4_ex1.py">機器人作動</a><span>)</span></p>
+<h5 data-path-to-node="2">1. 定義世界與座標 (The Grid System)</h5>
+<h5 data-path-to-node="3">首先，電腦不認識「格子」，它只認識數字。我們必須把畫面抽象化成一個座標系統。</h5>
+<ul data-path-to-node="4">
+<li>
+<h5><b data-index-in-node="0" data-path-to-node="4,0,0">邏輯座標 (Logical Coordinates)</b>：這是機器人「大腦」裡的位置。</h5>
+<ul data-path-to-node="4,0,1">
+<li>
+<h5>例如：<code data-index-in-node="3" data-path-to-node="4,0,1,0,0">(0, 0)</code> 是左下角，<code data-index-in-node="15" data-path-to-node="4,0,1,0,0">(9, 9)</code> 是右上角。</h5>
+</li>
+<li>
+<h5>機器人的狀態只需要存：<code data-index-in-node="11" data-path-to-node="4,0,1,1,0">x=1</code>, <code data-index-in-node="16" data-path-to-node="4,0,1,1,0">y=1</code>, <code data-index-in-node="21" data-path-to-node="4,0,1,1,0">facing='E'</code> (面向東)。</h5>
+</li>
+</ul>
+</li>
+<li>
+<h5><b data-index-in-node="0" data-path-to-node="4,1,0">螢幕像素 (Screen Pixels)</b>：這是眼睛看到的畫面。</h5>
+<ul data-path-to-node="4,1,1">
+<li>
+<h5>這需要換算：<b data-index-in-node="6" data-path-to-node="4,1,1,0,0">像素位置 = 邏輯座標 × 格子大小</b></h5>
+</li>
+<li>
+<h5>在你的程式中就是：<code data-index-in-node="9" data-path-to-node="4,1,1,1,0">px = x * CELL_SIZE</code>。</h5>
+</li>
+</ul>
+</li>
+</ul>
+<h5 data-path-to-node="5">2. 移動邏輯 (State Update)</h5>
+<h5><br/>當你下指令 <code data-index-in-node="6" data-path-to-node="6">r.move()</code> 時，其實只是在做簡單的加減法，並沒有真的在「走」。</h5>
+<ul data-path-to-node="7">
+<li>
+<h5><b data-index-in-node="0" data-path-to-node="7,0,0">判斷方向</b>：</h5>
+<ul data-path-to-node="7,0,1">
+<li>
+<h5>若面向 <b data-index-in-node="4" data-path-to-node="7,0,1,0,0">東 (E)</b>：<code data-index-in-node="10" data-path-to-node="7,0,1,0,0">x</code> 加 1 (<code data-index-in-node="17" data-path-to-node="7,0,1,0,0">x = x + 1</code>)</h5>
+</li>
+<li>
+<h5>若面向 <b data-index-in-node="4" data-path-to-node="7,0,1,1,0">西 (W)</b>：<code data-index-in-node="10" data-path-to-node="7,0,1,1,0">x</code> 減 1 (<code data-index-in-node="17" data-path-to-node="7,0,1,1,0">x = x - 1</code>)</h5>
+</li>
+<li>
+<h5>若面向 <b data-index-in-node="4" data-path-to-node="7,0,1,2,0">北 (N)</b>：<code data-index-in-node="10" data-path-to-node="7,0,1,2,0">y</code> 加 1 (<code data-index-in-node="17" data-path-to-node="7,0,1,2,0">y = y + 1</code>)</h5>
+</li>
+<li>
+<h5>若面向 <b data-index-in-node="4" data-path-to-node="7,0,1,3,0">南 (S)</b>：<code data-index-in-node="10" data-path-to-node="7,0,1,3,0">y</code> 減 1 (<code data-index-in-node="17" data-path-to-node="7,0,1,3,0">y = y - 1</code>)</h5>
+</li>
+</ul>
+</li>
+<li>
+<h5><b data-index-in-node="0" data-path-to-node="7,1,0">邊界檢查 (Collision Detection)</b>：</h5>
+<ul data-path-to-node="7,1,1">
+<li>
+<h5>在加減之前，先用 <code data-index-in-node="9" data-path-to-node="7,1,1,0,0">if</code> 檢查新的數字有沒有超出 <code data-index-in-node="24" data-path-to-node="7,1,1,0,0">0</code> 到 <code data-index-in-node="28" data-path-to-node="7,1,1,0,0">width-1</code> 的範圍。如果超出了，就是「撞牆」。</h5>
+</li>
+</ul>
+</li>
+</ul>
+<h5 data-path-to-node="8">3. 動畫原理 (The Loop)</h5>
+<h5><br/>這是最重要的一點。如果你用 Python 的 <code data-index-in-node="23" data-path-to-node="9">for</code> 迴圈跑 10 步，電腦運算太快，你會看到機器人「瞬間移動」到終點。為了要有「走路」的感覺，必須欺騙眼睛：</h5>
+<ul data-path-to-node="10">
+<li>
+<h5><b data-index-in-node="0" data-path-to-node="10,0,0">佇列 (Queue) 系統</b>：</h5>
+<ul data-path-to-node="10,0,1">
+<li>
+<h5>你程式碼裡的 <code data-index-in-node="7" data-path-to-node="10,0,1,0,0">queue</code> 就像一張「代辦事項清單」。</h5>
+</li>
+<li>
+<h5>當你寫 <code data-index-in-node="4" data-path-to-node="10,0,1,1,0">r.move(5)</code>，程式不是馬上走，而是把「走一步」這件事寫進清單 5 次。</h5>
+</li>
+</ul>
+</li>
+<li>
+<h5><b data-index-in-node="0" data-path-to-node="10,1,0">計時器 (Timer / Recursion)</b>：</h5>
+<ul data-path-to-node="10,1,1">
+<li>
+<h5>程式會執行：「做一個動作」 -&gt; <b data-index-in-node="17" data-path-to-node="10,1,1,0,0">「休息 0.2 秒」</b> -&gt; 「做下一個動作」。</h5>
+</li>
+<li>
+<h5>在 Brython 裡是用 <code data-index-in-node="14" data-path-to-node="10,1,1,1,0">timer.set_timeout(step, 200)</code> 來實現這個「休息後再呼叫自己」的功能。</h5>
+</li>
+</ul>
+</li>
+</ul>
 <h2>W14</h2>
 <h2>W17</h2>
 <h2>W18</h2>
